@@ -1,6 +1,6 @@
 {
   "name": "video-background",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "description": "Zero-dependency web component for YouTube, Vimeo, and HTML5 video backgrounds",
   "type": "module",
   "main": "dist/video-background.umd.js",
@@ -34,11 +34,11 @@
     "video",
     "background"
   ],
-  "author": "Nikola Stamatovic (@stamat)",
+  "author": "Kurt Stubbings",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stamat/youtube-background"
+    "url": "https://github.com/homeworkclubco/video-background"
   },
   "devDependencies": {
     "typescript": "^5.7.0",
