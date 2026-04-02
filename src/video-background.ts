@@ -99,7 +99,10 @@ export class VideoBackgroundElement extends HTMLElement {
     }
 
     if (name === 'play-button' || name === 'mute-button' || name === 'seek-bar') {
-      if (this.provider) this.buildControls();
+      if (this.provider) {
+        this.config[name as 'play-button' | 'mute-button' | 'seek-bar'] = newVal !== null && newVal !== 'false';
+        this.buildControls();
+      }
     }
   }
 
