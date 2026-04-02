@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>video-background demo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #111;
+      color: #fff;
+    }
+
+    section {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    section h2 {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      z-index: 10;
+      text-align: center;
+    }
+
+    video-background {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .label {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      font-size: 0.8rem;
+      opacity: 0.6;
+      z-index: 10;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- YouTube background with controls -->
+  <section>
+    <video-background
+                      src="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                      muted="true"
+                      loop="true"
+                      autoplay="true"
+                      play-button="true"
+                      mute-button="true"
+                      seek-bar="true"
+                      mobile="true"
+                      no-cookie="true">
+      <h2>YouTube Background</h2>
+    </video-background>
+    <span class="label">youtube • controls enabled</span>
+  </section>
+
+  <!-- Vimeo background, no controls -->
+  <section>
+    <video-background
+                      src="https://vimeo.com/76979871"
+                      muted="true"
+                      loop="true"
+                      autoplay="true">
+      <h2>Vimeo Background</h2>
+    </video-background>
+    <span class="label">vimeo • no controls</span>
+  </section>
+
+  <!-- HTML5 background -->
+  <section>
+    <video-background
+                      src="https://samplelib.com/mp4/sample-5s.mp4"
+                      muted="true"
+                      loop="true"
+                      autoplay="true"
+                      play-button="true"
+                      mute-button="true">
+      <h2>HTML5 Background</h2>
+    </video-background>
+    <span class="label">html5 • play + mute controls</span>
+  </section>
+
+  <!-- JS API demo -->
+  <section id="js-demo">
+    <video-background
+                      id="vb"
+                      src="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                      muted="true"
+                      loop="true"
+                      autoplay="true">
+      <div style="position:absolute;bottom:4rem;left:50%;transform:translateX(-50%);display:flex;gap:1rem;z-index:10">
+        <button onclick="document.getElementById('vb').play()">Play</button>
+        <button onclick="document.getElementById('vb').pause()">Pause</button>
+        <button onclick="document.getElementById('vb').mute()">Mute</button>
+        <button onclick="document.getElementById('vb').unmute()">Unmute</button>
+        <button onclick="document.getElementById('vb').src='https://www.youtube.com/watch?v=dQw4w9WgXcQ'">Change
+          Source</button>
+      </div>
+      <h2>JS API Demo</h2>
+    </video-background>
+    <span class="label">youtube • programmatic API</span>
+  </section>
+
+  <script type="module" src="/src/index.ts"></script>
+</body>
+
+</html>

@@ -1,0 +1,50 @@
+{
+  "name": "video-background",
+  "version": "2.0.0",
+  "description": "Zero-dependency web component for YouTube, Vimeo, and HTML5 video backgrounds",
+  "type": "module",
+  "main": "dist/video-background.umd.js",
+  "module": "dist/video-background.es.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/video-background.es.js",
+      "require": "./dist/video-background.umd.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "keywords": [
+    "video-background",
+    "youtube",
+    "vimeo",
+    "web-component",
+    "custom-element",
+    "video",
+    "background"
+  ],
+  "author": "Nikola Stamatovic (@stamat)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stamat/youtube-background"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0",
+    "vite-plugin-dts": "^4.3.0",
+    "vitest": "^3.0.0",
+    "happy-dom": "^16.0.0"
+  }
+}
