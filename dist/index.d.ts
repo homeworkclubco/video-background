@@ -120,6 +120,8 @@ export declare class VideoBackgroundElement extends HTMLElement {
     set src(val: string);
     get volume(): number;
     set volume(val: number);
+    get poster(): string | null;
+    set poster(val: string | null);
 }
 
 export declare type VideoState = 'notstarted' | 'ended' | 'playing' | 'paused' | 'buffering' | 'cued';

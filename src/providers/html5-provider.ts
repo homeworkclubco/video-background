@@ -29,6 +29,8 @@ export class HTML5Provider extends BaseProvider {
     video.setAttribute('playsinline', '');
     video.setAttribute('tabindex', '-1');
     video.setAttribute('aria-hidden', 'true');
+    if (this.config.muted) video.setAttribute('muted', '');
+    if (this.config.autoplay) video.setAttribute('autoplay', '');
     video.muted = this.config.muted;
     video.loop = this.config.loop;
     video.autoplay = this.config.autoplay;
@@ -67,7 +69,8 @@ export class HTML5Provider extends BaseProvider {
   }
 
   private onCanPlay(): void {
-    if (!this.initialPlay && this.config.autoplay) {
+    this.mobileLowBatteryAutoplayHack();
+    if (!this.initialPlay && this.config.autoplay && (this.isIntersecting || this.config['always-play'])) {
       const p = this.video?.play();
       if (p) p.catch(() => { /* autoplay blocked — user interaction needed */ });
     }

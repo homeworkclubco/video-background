@@ -104,6 +104,11 @@ export class VideoBackgroundElement extends HTMLElement {
         this.buildControls();
       }
     }
+
+    if (name === 'poster') {
+      this.config.poster = newVal;
+      this.setPoster();
+    }
   }
 
   // ===== Attribute → config parsing =====
@@ -147,6 +152,11 @@ export class VideoBackgroundElement extends HTMLElement {
       'video-id': parsed?.id ?? '',
       'unlisted-hash': parsed?.unlisted ?? '',
     };
+
+    // Mobile browsers require muted audio for autoplay.
+    if (this.config.autoplay && isMobile()) {
+      this.config.muted = true;
+    }
   }
 
   private initProvider(): void {
@@ -162,7 +172,7 @@ export class VideoBackgroundElement extends HTMLElement {
     if (!parsed) return;
 
     const providerType: ProviderType = parsed.type;
-    this.setPoster(providerType, parsed.id, parsed.unlisted);
+    this.setPoster();
 
     let provider: BaseProvider;
     if (providerType === 'youtube') {
@@ -199,21 +209,20 @@ export class VideoBackgroundElement extends HTMLElement {
     }
   }
 
-  private setPoster(type: ProviderType, id: string, unlisted?: string): void {
+  private setPoster(): void {
     let posterUrl = this.config.poster;
 
     if (!posterUrl) {
-      if (type === 'youtube' && id) {
-        posterUrl = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
-      } else if (type === 'vimeo' && id) {
-        const hash = unlisted ? `/${unlisted}` : '';
-        posterUrl = `https://vumbnail.com/${id}${hash}.jpg`;
+      const parsed = parseVideoUrl(this.config.src);
+      if (parsed?.type === 'youtube' && parsed.id) {
+        posterUrl = `https://img.youtube.com/vi/${parsed.id}/hqdefault.jpg`;
+      } else if (parsed?.type === 'vimeo' && parsed.id) {
+        const hash = parsed.unlisted ? `/${parsed.unlisted}` : '';
+        posterUrl = `https://vumbnail.com/${parsed.id}${hash}.jpg`;
       }
     }
 
-    if (posterUrl) {
-      this.posterEl.style.backgroundImage = `url(${posterUrl})`;
-    }
+    this.posterEl.style.backgroundImage = posterUrl ? `url(${posterUrl})` : '';
   }
 
   private showPosterOnly(): void {
@@ -303,4 +312,9 @@ export class VideoBackgroundElement extends HTMLElement {
   set src(val: string) { this.setAttribute('src', val); }
   get volume(): number { return parseFloat(this.getAttribute('volume') ?? '1'); }
   set volume(val: number) { this.setAttribute('volume', String(val)); }
+  get poster(): string | null { return this.getAttribute('poster'); }
+  set poster(val: string | null) {
+    if (val === null) this.removeAttribute('poster');
+    else this.setAttribute('poster', val);
+  }
 }

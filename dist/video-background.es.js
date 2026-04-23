@@ -3,7 +3,7 @@ const h = {
   autoplay: !0,
   muted: !0,
   loop: !0,
-  mobile: !1,
+  mobile: !0,
   volume: 1,
   "start-at": 0,
   "end-at": 0,
@@ -20,8 +20,8 @@ const h = {
   title: "Video background",
   "video-id": "",
   "unlisted-hash": ""
-}, T = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube-nocookie\.com\/embed\/)([^"&?\/\s]{11})/i, P = /(?:vimeo\.com\/(?:video\/|channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|)(\d+)(?:|\/\?))/i, x = /\.(mp4|webm|ogv|ogm|ogg|avi|m4v|mov|qt)(\?.*)?$/i;
-function y(r) {
+}, T = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube-nocookie\.com\/embed\/)([^"&?\/\s]{11})/i, P = /(?:vimeo\.com\/(?:video\/|channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|)(\d+)(?:|\/\?))/i, A = /\.(mp4|webm|ogv|ogm|ogg|avi|m4v|mov|qt)(\?.*)?$/i;
+function f(r) {
   if (!r) return null;
   const t = r.match(T);
   if (t && t[1])
@@ -31,14 +31,14 @@ function y(r) {
     const s = { id: e[1], type: "vimeo", link: r }, n = /\/[^\/\:\.]+(\:|\/)([^:?\/]+)\s?$/, o = /(\?|&)h=([^=&#?]+)/, l = r.match(n), a = r.match(o);
     return l ? s.unlisted = l[2] : a && (s.unlisted = a[2]), s;
   }
-  return r.match(x) ? { id: r, type: "html5", link: r } : null;
+  return r.match(A) ? { id: r, type: "html5", link: r } : null;
 }
-function E() {
+function y() {
   return /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Windows Phone/i.test(
     navigator.userAgent
   );
 }
-const A = `
+const x = `
   :host {
     display: block;
     position: relative;
@@ -241,9 +241,9 @@ const A = `
   .vb-seek-bar:hover .vb-seek-range::-webkit-slider-thumb { opacity: 1; }
   .vb-seek-bar:hover .vb-seek-range::-moz-range-thumb { opacity: 1; }
 `;
-class f {
+class v {
   constructor(t, e, i) {
-    this.playerElement = null, this.player = null, this.paused = !1, this.currentState = "notstarted", this.duration = 0, this.percentComplete = 0, this.isIntersecting = !1, this.initialPlay = !1, this.initialVolume = !1, this.config = t, this.container = e, this.hostElement = i, this.muted = t.muted, this.volume = t.volume, this.currentTime = t["start-at"] || 0, this.isMobile = E(), t["start-at"] && (this.percentComplete = this.timeToPercentage(t["start-at"]));
+    this.playerElement = null, this.player = null, this.paused = !1, this.currentState = "notstarted", this.duration = 0, this.percentComplete = 0, this.isIntersecting = !1, this.initialPlay = !1, this.initialVolume = !1, this.config = t, this.container = e, this.hostElement = i, this.muted = t.muted, this.volume = t.volume, this.currentTime = t["start-at"] || 0, this.isMobile = y(), t["start-at"] && (this.percentComplete = this.timeToPercentage(t["start-at"]));
   }
   // ===== Time math =====
   timeToPercentage(t) {
@@ -322,8 +322,8 @@ class f {
     (!o || isNaN(o)) && (o = 16 / 9);
     const l = i / s;
     let a, d;
-    const v = 100;
-    l < o ? (d = s + v, a = d * o) : (a = i + v, d = a / o), t.style.width = `${a}px`, t.style.height = `${d}px`;
+    const b = 100;
+    l < o ? (d = s + b, a = d * o) : (a = i + b, d = a / o), t.style.width = `${a}px`, t.style.height = `${d}px`;
   }
   // ===== Mobile low battery hack =====
   mobileLowBatteryAutoplayHack() {
@@ -366,7 +366,7 @@ function C() {
     e.src = "https://www.youtube.com/iframe_api", document.head.appendChild(e);
   }), u);
 }
-class S extends f {
+class S extends v {
   constructor(t, e, i) {
     super(t, e, i), this.iframe = null, this.timeUpdateTimer = null, this.playerReady = !1;
   }
@@ -483,7 +483,7 @@ function L() {
     e.src = "https://player.vimeo.com/api/player.js", e.onload = () => r(), e.onerror = () => t(new Error("Failed to load Vimeo player API")), document.head.appendChild(e);
   }), p);
 }
-class z extends f {
+class z extends v {
   constructor(t, e, i) {
     super(t, e, i), this.iframe = null, this.player = null;
   }
@@ -595,13 +595,13 @@ function I(r) {
   const t = ((e = r.split("?")[0].split(".").pop()) == null ? void 0 : e.toLowerCase()) ?? "";
   return M[t] ?? "video/mp4";
 }
-class R extends f {
+class R extends v {
   constructor(t, e, i) {
     super(t, e, i), this.video = null;
   }
   init() {
     const t = document.createElement("video");
-    t.setAttribute("playsinline", ""), t.setAttribute("tabindex", "-1"), t.setAttribute("aria-hidden", "true"), t.muted = this.config.muted, t.loop = this.config.loop, t.autoplay = this.config.autoplay, t.volume = this.config.volume, this.stylePlayerElement(t), this.appendSource(t, this.config.src), this.container.appendChild(t), this.video = t, this.playerElement = t, t.addEventListener("loadedmetadata", () => this.onLoadedMetadata()), t.addEventListener("durationchange", () => this.onDurationChange()), t.addEventListener("canplay", () => this.onCanPlay()), t.addEventListener("timeupdate", () => this.onVideoTimeUpdate()), t.addEventListener("play", () => this.onVideoPlay()), t.addEventListener("pause", () => this.onVideoPause()), t.addEventListener("waiting", () => {
+    t.setAttribute("playsinline", ""), t.setAttribute("tabindex", "-1"), t.setAttribute("aria-hidden", "true"), this.config.muted && t.setAttribute("muted", ""), this.config.autoplay && t.setAttribute("autoplay", ""), t.muted = this.config.muted, t.loop = this.config.loop, t.autoplay = this.config.autoplay, t.volume = this.config.volume, this.stylePlayerElement(t), this.appendSource(t, this.config.src), this.container.appendChild(t), this.video = t, this.playerElement = t, t.addEventListener("loadedmetadata", () => this.onLoadedMetadata()), t.addEventListener("durationchange", () => this.onDurationChange()), t.addEventListener("canplay", () => this.onCanPlay()), t.addEventListener("timeupdate", () => this.onVideoTimeUpdate()), t.addEventListener("play", () => this.onVideoPlay()), t.addEventListener("pause", () => this.onVideoPause()), t.addEventListener("waiting", () => {
       this.currentState = "buffering";
     }), t.addEventListener("ended", () => {
       this.currentState = "ended", this.onVideoEnded();
@@ -619,7 +619,7 @@ class R extends f {
   }
   onCanPlay() {
     var t;
-    if (!this.initialPlay && this.config.autoplay) {
+    if (this.mobileLowBatteryAutoplayHack(), !this.initialPlay && this.config.autoplay && (this.isIntersecting || this.config["always-play"])) {
       const e = (t = this.video) == null ? void 0 : t.play();
       e && e.catch(() => {
       });
@@ -686,13 +686,13 @@ class R extends f {
     this.video && (this.video.pause(), this.video.src = "", this.video.innerHTML = ""), this.video = null, this.playerElement = null, this.player = null;
   }
 }
-const b = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>', g = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>', w = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>', k = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>';
+const g = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>', w = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>', k = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>', E = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>';
 function U(r, t) {
   const e = document.createElement("button");
-  e.className = "vb-btn vb-play-btn", e.setAttribute("part", "play-btn"), e.setAttribute("role", "switch"), e.setAttribute("aria-pressed", String(!r.paused)), e.setAttribute("aria-label", r.paused ? "Play" : "Pause"), e.innerHTML = r.paused ? b : g;
+  e.className = "vb-btn vb-play-btn", e.setAttribute("part", "play-btn"), e.setAttribute("role", "switch"), e.setAttribute("aria-pressed", String(!r.paused)), e.setAttribute("aria-label", r.paused ? "Play" : "Pause"), e.innerHTML = r.paused ? g : w;
   function i() {
     const s = r.currentState === "playing";
-    e.innerHTML = s ? g : b, e.setAttribute("aria-pressed", String(s)), e.setAttribute("aria-label", s ? "Pause" : "Play");
+    e.innerHTML = s ? w : g, e.setAttribute("aria-pressed", String(s)), e.setAttribute("aria-label", s ? "Pause" : "Play");
   }
   return e.addEventListener("click", () => {
     r.currentState === "playing" ? r.pause() : r.play();
@@ -700,15 +700,15 @@ function U(r, t) {
 }
 function O(r, t) {
   const e = document.createElement("button");
-  e.className = "vb-btn vb-mute-btn", e.setAttribute("part", "mute-btn"), e.setAttribute("role", "switch"), e.setAttribute("aria-pressed", String(r.muted)), e.setAttribute("aria-label", r.muted ? "Unmute" : "Mute"), e.innerHTML = r.muted ? k : w;
+  e.className = "vb-btn vb-mute-btn", e.setAttribute("part", "mute-btn"), e.setAttribute("role", "switch"), e.setAttribute("aria-pressed", String(r.muted)), e.setAttribute("aria-label", r.muted ? "Unmute" : "Mute"), e.innerHTML = r.muted ? E : k;
   function i() {
-    e.innerHTML = r.muted ? k : w, e.setAttribute("aria-pressed", String(r.muted)), e.setAttribute("aria-label", r.muted ? "Unmute" : "Mute");
+    e.innerHTML = r.muted ? E : k, e.setAttribute("aria-pressed", String(r.muted)), e.setAttribute("aria-label", r.muted ? "Unmute" : "Mute");
   }
   return e.addEventListener("click", () => {
     r.muted ? r.unmute() : r.mute(), i();
   }), t.addEventListener("vb-mute", i), t.addEventListener("vb-unmute", i), e;
 }
-function N(r, t) {
+function B(r, t) {
   const e = document.createElement("div");
   e.className = "vb-seek-bar", e.setAttribute("part", "seek-bar");
   const i = document.createElement("progress");
@@ -731,7 +731,7 @@ function N(r, t) {
     l(0);
   }), e;
 }
-const B = [
+const N = [
   "src",
   "autoplay",
   "muted",
@@ -758,12 +758,12 @@ class D extends HTMLElement {
       this.provider && (document.hidden ? this.provider.softPause() : (this.provider.isIntersecting || this.config["always-play"]) && this.provider.softPlay());
     }, this.shadow = this.attachShadow({ mode: "open" });
     const t = document.createElement("style");
-    t.textContent = A, this.shadow.appendChild(t), this.wrapper = document.createElement("div"), this.wrapper.className = "vb-wrapper", this.playerContainer = document.createElement("div"), this.playerContainer.className = "vb-player", this.posterEl = document.createElement("div"), this.posterEl.className = "vb-poster", this.posterEl.setAttribute("aria-hidden", "true"), this.controlsEl = document.createElement("div"), this.controlsEl.className = "vb-controls", this.controlsEl.setAttribute("aria-label", "Video controls");
+    t.textContent = x, this.shadow.appendChild(t), this.wrapper = document.createElement("div"), this.wrapper.className = "vb-wrapper", this.playerContainer = document.createElement("div"), this.playerContainer.className = "vb-player", this.posterEl = document.createElement("div"), this.posterEl.className = "vb-poster", this.posterEl.setAttribute("aria-hidden", "true"), this.controlsEl = document.createElement("div"), this.controlsEl.className = "vb-controls", this.controlsEl.setAttribute("aria-label", "Video controls");
     const e = document.createElement("div");
     e.className = "vb-overlay", this.overlaySlot = document.createElement("slot"), e.appendChild(this.overlaySlot), this.wrapper.appendChild(this.playerContainer), this.wrapper.appendChild(this.posterEl), this.wrapper.appendChild(this.controlsEl), this.wrapper.appendChild(e), this.shadow.appendChild(this.wrapper);
   }
   static get observedAttributes() {
-    return [...B];
+    return [...N];
   }
   connectedCallback() {
     this.readAttributes(), this.initProvider();
@@ -782,7 +782,7 @@ class D extends HTMLElement {
         const l = parseFloat(i);
         isNaN(l) || (s = this.provider) == null || s.setVolume(Math.max(0, Math.min(1, l)));
       }
-      t === "muted" && (i !== null && i !== "false" ? (n = this.provider) == null || n.mute() : (o = this.provider) == null || o.unmute()), (t === "play-button" || t === "mute-button" || t === "seek-bar") && this.provider && this.buildControls();
+      t === "muted" && (i !== null && i !== "false" ? (n = this.provider) == null || n.mute() : (o = this.provider) == null || o.unmute()), (t === "play-button" || t === "mute-button" || t === "seek-bar") && this.provider && (this.config[t] = i !== null && i !== "false", this.buildControls()), t === "poster" && (this.config.poster = i, this.setPoster());
     }
   }
   // ===== Attribute → config parsing =====
@@ -793,7 +793,7 @@ class D extends HTMLElement {
     }, i = (o, l) => {
       const a = t(o);
       return a !== null && !isNaN(parseFloat(a)) ? parseFloat(a) : l;
-    }, s = t("src") ?? "", n = y(s);
+    }, s = t("src") ?? "", n = f(s);
     this.config = {
       ...h,
       src: s,
@@ -817,19 +817,19 @@ class D extends HTMLElement {
       title: t("title") ?? h.title,
       "video-id": (n == null ? void 0 : n.id) ?? "",
       "unlisted-hash": (n == null ? void 0 : n.unlisted) ?? ""
-    };
+    }, this.config.autoplay && y() && (this.config.muted = !0);
   }
   initProvider() {
     const t = this.config.src;
     if (!t) return;
-    if (!this.config.mobile && E()) {
+    if (!this.config.mobile && y()) {
       this.showPosterOnly();
       return;
     }
-    const e = y(t);
+    const e = f(t);
     if (!e) return;
     const i = e.type;
-    this.setPoster(i, e.id, e.unlisted);
+    this.setPoster();
     let s;
     i === "youtube" ? s = new S(this.config, this.playerContainer, this) : i === "vimeo" ? s = new z(this.config, this.playerContainer, this) : s = new R(this.config, this.playerContainer, this), this.provider = s, this.initialized = !0;
     const n = () => {
@@ -845,23 +845,24 @@ class D extends HTMLElement {
     } else
       n();
   }
-  setPoster(t, e, i) {
-    let s = this.config.poster;
-    if (!s) {
-      if (t === "youtube" && e)
-        s = `https://img.youtube.com/vi/${e}/hqdefault.jpg`;
-      else if (t === "vimeo" && e) {
-        const n = i ? `/${i}` : "";
-        s = `https://vumbnail.com/${e}${n}.jpg`;
+  setPoster() {
+    let t = this.config.poster;
+    if (!t) {
+      const e = f(this.config.src);
+      if ((e == null ? void 0 : e.type) === "youtube" && e.id)
+        t = `https://img.youtube.com/vi/${e.id}/hqdefault.jpg`;
+      else if ((e == null ? void 0 : e.type) === "vimeo" && e.id) {
+        const i = e.unlisted ? `/${e.unlisted}` : "";
+        t = `https://vumbnail.com/${e.id}${i}.jpg`;
       }
     }
-    s && (this.posterEl.style.backgroundImage = `url(${s})`);
+    this.posterEl.style.backgroundImage = t ? `url(${t})` : "";
   }
   showPosterOnly() {
     this.posterEl.style.opacity = "1";
   }
   buildControls() {
-    this.controlsEl.innerHTML = "", this.provider && (this.config["play-button"] && this.controlsEl.appendChild(U(this.provider, this)), this.config["mute-button"] && this.controlsEl.appendChild(O(this.provider, this)), this.config["seek-bar"] && this.controlsEl.appendChild(N(this.provider, this)));
+    this.controlsEl.innerHTML = "", this.provider && (this.config["play-button"] && this.controlsEl.appendChild(U(this.provider, this)), this.config["mute-button"] && this.controlsEl.appendChild(O(this.provider, this)), this.config["seek-bar"] && this.controlsEl.appendChild(B(this.provider, this)));
   }
   setupObservers() {
     !this.config["always-play"] && "IntersectionObserver" in window ? (this.intersectionObserver = new IntersectionObserver(
@@ -938,6 +939,12 @@ class D extends HTMLElement {
   }
   set volume(t) {
     this.setAttribute("volume", String(t));
+  }
+  get poster() {
+    return this.getAttribute("poster");
+  }
+  set poster(t) {
+    t === null ? this.removeAttribute("poster") : this.setAttribute("poster", t);
   }
 }
 customElements.get("video-background") || customElements.define("video-background", D);
